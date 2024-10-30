@@ -26,51 +26,66 @@
         <div class="space-y-2">
           <% @sections.each_with_index do |section, index| %>
             <% if index == 0 %>
-              <div class="flex justify-center">
-                <%= link_to 'Insert Section Here', new_manual_section_path(@manual, prev_position: 0, next_position: section.position),
-                    class: "text-sm text-blue-600 hover:text-blue-900" %>
+              <div class="flex justify-center opacity-0 hover:opacity-100 transition-opacity">
+                <%= link_to new_manual_section_path(@manual, prev_position: 0, next_position: section.position),
+                    class: "inline-flex items-center text-sm text-gray-500 hover:text-gray-700" do %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                  </svg>
+                  <span class="ml-1">Add section</span>
+                <% end %>
               </div>
             <% end %>
 
-            <div class="bg-white shadow rounded-lg" id="section_<%= section.id %>">
+            <div class="group relative bg-white hover:shadow-lg rounded-lg transition-shadow duration-200" id="section_<%= section.id %>">
               <div class="p-6">
-                <div class="flex justify-between items-start mb-4">
+                <div class="flex justify-between items-start">
                   <div class="prose max-w-none">
                     <%= sanitize section.content %>
                   </div>
-                  <div class="flex items-center space-x-2">
+                  
+                  <!-- Section actions -->
+                  <div class="flex items-center justify-items-center space-x-4 opacity-0 group-hover:opacity-100 transition-opacity">
                     <% if section.embedding.present? %>
-                      <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M16.5 7.5h-9v9h9v-9z" />
-                        <path fill-rule="evenodd" d="M8.25 2.25A.75.75 0 019 3v.75h2.25V3a.75.75 0 011.5 0v.75H15V3a.75.75 0 011.5 0v.75h.75a3 3 0 013 3v.75H21A.75.75 0 0121 9h-.75v2.25H21a.75.75 0 010 1.5h-.75V15H21a.75.75 0 010 1.5h-.75v.75a3 3 0 01-3 3h-.75V21a.75.75 0 01-1.5 0v-.75h-2.25V21a.75.75 0 01-1.5 0v-.75H9V21a.75.75 0 01-1.5 0v-.75h-.75a3 3 0 01-3-3v-.75H3A.75.75 0 013 15h.75v-2.25H3a.75.75 0 010-1.5h.75V9H3a.75.75 0 010-1.5h.75v-.75a3 3 0 013-3h.75V3a.75.75 0 01.75-.75zM6 6.75A.75.75 0 016.75 6h10.5a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V6.75z" clip-rule="evenodd" />
+                      <div class="flex items-center space-x-1">
+                        <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M16.5 7.5h-9v9h9v-9z" />
+                          <path fill-rule="evenodd" d="M8.25 2.25A.75.75 0 019 3v.75h2.25V3a.75.75 0 011.5 0v.75H15V3a.75.75 0 011.5 0v.75h.75a3 3 0 013 3v.75H21A.75.75 0 0121 9h-.75v2.25H21a.75.75 0 010 1.5h-.75V15H21a.75.75 0 010 1.5h-.75v.75a3 3 0 01-3 3h-.75V21a.75.75 0 01-1.5 0v-.75h-2.25V21a.75.75 0 01-1.5 0v-.75H9V21a.75.75 0 01-1.5 0v-.75h-.75a3 3 0 01-3-3v-.75H3A.75.75 0 013 15h.75v-2.25H3a.75.75 0 010-1.5h.75V9H3a.75.75 0 010-1.5h.75v-.75a3 3 0 013-3h.75V3a.75.75 0 01.75-.75zM6 6.75A.75.75 0 016.75 6h10.5a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V6.75z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-xs text-green-500">AI-enabled</span>
+                      </div>
+                    <% end %>
+                    
+                    <%= link_to edit_manual_section_path(@manual, section), 
+                        class: "text-gray-400 hover:text-gray-600" do %>
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                       </svg>
-                      <span class="text-xs text-green-500">AI-enabled</span>
-                    <% else %>
-                      <svg class="h-5 w-5 text-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M16.5 7.5h-9v9h9v-9z" />
-                        <path fill-rule="evenodd" d="M8.25 2.25A.75.75 0 019 3v.75h2.25V3a.75.75 0 011.5 0v.75H15V3a.75.75 0 011.5 0v.75h.75a3 3 0 013 3v.75H21A.75.75 0 0121 9h-.75v2.25H21a.75.75 0 010 1.5h-.75V15H21a.75.75 0 010 1.5h-.75v.75a3 3 0 01-3 3h-.75V21a.75.75 0 01-1.5 0v-.75h-2.25V21a.75.75 0 01-1.5 0v-.75H9V21a.75.75 0 01-1.5 0v-.75h-.75a3 3 0 01-3-3v-.75H3A.75.75 0 013 15h.75v-2.25H3a.75.75 0 010-1.5h.75V9H3a.75.75 0 010-1.5h.75v-.75a3 3 0 013-3h.75V3a.75.75 0 01.75-.75zM6 6.75A.75.75 0 016.75 6h10.5a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V6.75z" clip-rule="evenodd" />
+                    <% end %>
+                    
+                    <%= button_to manual_section_path(@manual, section), 
+                        method: :delete,
+                        class: "text-gray-400 hover:text-red-600 flex",
+                        data: { turbo_confirm: 'Are you sure?' } do %>
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                       </svg>
-                      <span class="text-xs text-gray-400">Processing...</span>
                     <% end %>
                   </div>
-                </div>
-                <div class="mt-4 flex justify-end space-x-3">
-                  <%= link_to 'Edit', edit_manual_section_path(@manual, section), 
-                      class: "text-sm text-blue-600 hover:text-blue-900" %>
-                  <%= button_to 'Delete', manual_section_path(@manual, section), 
-                      method: :delete,
-                      class: "text-sm text-red-600 hover:text-red-900",
-                      data: { turbo_confirm: 'Are you sure?' } %>
                 </div>
               </div>
             </div>
 
-            <div class="flex justify-center">
-              <%= link_to 'Insert Section Here', 
-                  new_manual_section_path(@manual, 
-                    prev_position: section.position,
-                    next_position: @sections[index + 1]&.position || section.position + 1),
-                  class: "text-sm text-blue-600 hover:text-blue-900" %>
+            <div class="flex justify-center opacity-0 hover:opacity-100 transition-opacity">
+              <%= link_to new_manual_section_path(@manual, 
+                  prev_position: section.position,
+                  next_position: @sections[index + 1]&.position || section.position + 1),
+                  class: "inline-flex items-center text-sm text-gray-500 hover:text-gray-700" do %>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span class="ml-1">Add section</span>
+              <% end %>
             </div>
           <% end %>
         </div>
