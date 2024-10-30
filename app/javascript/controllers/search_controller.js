@@ -1,11 +1,19 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["query", "sidebar", "results", "mainContent"]
+  static targets = ["query", "sidebar", "results", "mainContent", "spinner"]
   
   connect() {
     this.timeout = null
     this.currentSection = null
+  }
+
+  toggleSidebar() {
+    this.sidebarTarget.classList.toggle('translate-x-full')
+    this.mainContentTarget.classList.toggle('mr-96')
+    if (!this.sidebarTarget.classList.contains('translate-x-full')) {
+      this.queryTarget.focus()
+    }
   }
 
   search(event) {
@@ -13,11 +21,12 @@ export default class extends Controller {
     
     const query = this.queryTarget.value.trim()
     if (query.length < 3) {
-      this.closeSidebar()
+      this.resultsTarget.innerHTML = ''
       return
     }
     
-    this.timeout = setTimeout(() => this.performSearch(query), 300)
+    this.spinnerTarget.classList.remove('hidden')
+    this.timeout = setTimeout(() => this.performSearch(query), 500)
   }
 
   async performSearch(query) {
@@ -33,6 +42,8 @@ export default class extends Controller {
     } catch (error) {
       console.error('Search error:', error)
       this.showError()
+    } finally {
+      this.spinnerTarget.classList.add('hidden')
     }
   }
 
