@@ -110,6 +110,34 @@ class SectionsController < ApplicationController
     end
   end
 
+  def summarize
+    query = params[:query]
+    results = params[:results]
+
+    response = OpenAI::Client.new.chat(
+      parameters: {
+        model: "gpt-3.5-turbo-0125",
+        messages: [
+          { 
+            role: "system", 
+            content: "You are a helpful assistant that summarizes search results and answers questions based on the provided context. Keep your responses concise and focused."
+          },
+          { 
+            role: "user", 
+            content: "Question: #{query}\n\nContext:\n#{results.join("\n\n")}\n\nPlease provide a brief summary answering the question based on these search results. If you cannot answer the question based on the context provided, say so. Do not include any other information."
+          }
+        ],
+        temperature: 0.7
+      }
+    )
+
+    if response["choices"]
+      render json: { summary: response["choices"][0]["message"]["content"] }
+    else
+      render json: { error: "Failed to generate summary" }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_manual

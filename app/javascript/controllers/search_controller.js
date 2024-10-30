@@ -51,31 +51,76 @@ export default class extends Controller {
     this.sidebarTarget.classList.remove('translate-x-full')
     this.mainContentTarget.classList.add('mr-96')
     
-    this.resultsTarget.innerHTML = results.map(result => {
-      const tempDiv = document.createElement('div')
-      tempDiv.innerHTML = result.content
-      const textContent = tempDiv.textContent || tempDiv.innerText
-      const preview = textContent.substring(0, 200) + '...'
-      const scorePercentage = Math.round(result.score * 100)
-      
-      return `
-        <div class="border-b border-gray-200 pb-4 mb-4 last:border-b-0" data-section-id="section_${result._id}">
-          <div class="flex items-center justify-between mb-2">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              ${scorePercentage}% match
-            </span>
-            <a href="#section_${result._id}" 
-               data-action="search#scrollToSection"
-               class="text-sm text-blue-600 hover:text-blue-900">
-              Jump to section
-            </a>
-          </div>
-          <div class="text-sm text-gray-600">
-            ${preview}
+    this.resultsTarget.innerHTML = `
+      <div class="mb-6">
+        <h3 class="text-sm font-medium text-gray-900 mb-2">AI Summary</h3>
+        <div data-search-target="summary" class="prose prose-sm">
+          <div class="animate-pulse flex space-x-4">
+            <div class="flex-1 space-y-4 py-1">
+              <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+              <div class="space-y-2">
+                <div class="h-4 bg-gray-200 rounded"></div>
+                <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+              </div>
+            </div>
           </div>
         </div>
-      `
-    }).join('')
+      </div>
+      <div class="border-t border-gray-200 pt-6">
+        <h3 class="text-sm font-medium text-gray-900 mb-4">Matching Sections</h3>
+        ${results.map(result => {
+          const tempDiv = document.createElement('div')
+          tempDiv.innerHTML = result.content
+          const textContent = tempDiv.textContent || tempDiv.innerText
+          const preview = textContent.substring(0, 200) + '...'
+          const scorePercentage = Math.round(result.score * 100)
+          
+          return `
+            <div class="border-b border-gray-200 pb-4 mb-4 last:border-b-0" data-section-id="section_${result._id}">
+              <div class="flex items-center justify-between mb-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  ${scorePercentage}% match
+                </span>
+                <a href="#section_${result._id}" 
+                   data-action="search#scrollToSection"
+                   class="text-sm text-blue-600 hover:text-blue-900">
+                  Jump to section
+                </a>
+              </div>
+              <div class="text-sm text-gray-600">
+                ${preview}
+              </div>
+            </div>
+          `
+        }).join('')}
+      </div>
+    `
+
+    this.generateSummary(this.queryTarget.value, results)
+  }
+
+  async generateSummary(query, results) {
+    try {
+      const response = await fetch(`/manuals/${this.getManualId()}/sections/summarize`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ 
+          query,
+          results: results.map(r => r.content)
+        })
+      })
+      
+      const data = await response.json()
+      if (data.summary) {
+        const summaryEl = this.resultsTarget.querySelector('[data-search-target="summary"]')
+        summaryEl.innerHTML = data.summary
+      }
+    } catch (error) {
+      console.error('Summary error:', error)
+    }
   }
 
   showNoResults() {

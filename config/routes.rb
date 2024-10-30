@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     resources :sections do
       collection do
         get :search
+        post :summarize
       end
       
       member do
