@@ -1,6 +1,6 @@
 <div class="relative" data-controller="search">
   <!-- Main content -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" data-search-target="mainContent">
+  <div class="max-w-7xl mx-auto p-0 sm:p-6" data-search-target="mainContent">
     <div class="md:flex md:items-center md:justify-between mb-8">
       <div class="min-w-0 flex-1">
         <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
@@ -38,40 +38,38 @@
             <% end %>
 
             <div class="group relative bg-white hover:shadow-lg rounded-lg transition-shadow duration-200" id="section_<%= section.id %>">
-              <div class="p-6">
-                <div class="flex justify-between items-start">
-                  <div class="prose max-w-none">
-                    <%= sanitize section.content %>
+              <!-- Section actions header -->
+              <div class="absolute top-0 right-0 my-2 mr-2 flex items-center space-x-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <% if section.embedding.present? %>
+                  <div class="flex items-center space-x-1 bg-white/80 backdrop-blur-sm rounded-full px-2 py-1">
+                    <svg class="h-4 w-4 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                      <path fill-rule="evenodd" d="M8.25 2.25A.75.75 0 019 3v.75h2.25V3a.75.75 0 011.5 0v.75H15V3a.75.75 0 011.5 0v.75h.75a3 3 0 013 3v.75H21A.75.75 0 0121 9h-.75v2.25H21a.75.75 0 010 1.5h-.75V15H21a.75.75 0 010 1.5h-.75v.75a3 3 0 01-3 3h-.75V21a.75.75 0 01-1.5 0v-.75h-2.25V21a.75.75 0 01-1.5 0v-.75H9V21a.75.75 0 01-1.5 0v-.75h-.75a3 3 0 01-3-3v-.75H3A.75.75 0 013 15h.75v-2.25H3a.75.75 0 010-1.5h.75V9H3a.75.75 0 010-1.5h.75v-.75a3 3 0 013-3h.75V3a.75.75 0 01.75-.75z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="text-xs text-green-500">AI-enabled</span>
                   </div>
-                  
-                  <!-- Section actions -->
-                  <div class="flex items-center justify-items-center space-x-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <% if section.embedding.present? %>
-                      <div class="flex items-center space-x-1">
-                        <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M16.5 7.5h-9v9h9v-9z" />
-                          <path fill-rule="evenodd" d="M8.25 2.25A.75.75 0 019 3v.75h2.25V3a.75.75 0 011.5 0v.75H15V3a.75.75 0 011.5 0v.75h.75a3 3 0 013 3v.75H21A.75.75 0 0121 9h-.75v2.25H21a.75.75 0 010 1.5h-.75V15H21a.75.75 0 010 1.5h-.75v.75a3 3 0 01-3 3h-.75V21a.75.75 0 01-1.5 0v-.75h-2.25V21a.75.75 0 01-1.5 0v-.75H9V21a.75.75 0 01-1.5 0v-.75h-.75a3 3 0 01-3-3v-.75H3A.75.75 0 013 15h.75v-2.25H3a.75.75 0 010-1.5h.75V9H3a.75.75 0 010-1.5h.75v-.75a3 3 0 013-3h.75V3a.75.75 0 01.75-.75zM6 6.75A.75.75 0 016.75 6h10.5a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V6.75z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="text-xs text-green-500">AI-enabled</span>
-                      </div>
-                    <% end %>
-                    
-                    <%= link_to edit_manual_section_path(@manual, section), 
-                        class: "text-gray-400 hover:text-gray-600" do %>
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                      </svg>
-                    <% end %>
-                    
-                    <%= button_to manual_section_path(@manual, section), 
-                        method: :delete,
-                        class: "text-gray-400 hover:text-red-600 flex",
-                        data: { turbo_confirm: 'Are you sure?' } do %>
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                      </svg>
-                    <% end %>
-                  </div>
+                <% end %>
+                
+                <%= link_to edit_manual_section_path(@manual, section), 
+                    class: "text-gray-400 hover:text-gray-600 bg-white/80 backdrop-blur-sm rounded-full p-1" do %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                <% end %>
+                
+                <%= button_to manual_section_path(@manual, section), 
+                    method: :delete,
+                    class: "text-gray-400 hover:text-red-600 bg-white/80 backdrop-blur-sm rounded-full p-1",
+                    data: { turbo_confirm: 'Are you sure?' } do %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                <% end %>
+              </div>
+
+              <!-- Section content -->
+              <div class="p-4 sm:p-6">
+                <div class="prose max-w-none mt-4 sm:mt-2">
+                  <%= sanitize section.content %>
                 </div>
               </div>
             </div>
@@ -100,7 +98,7 @@
 
   <!-- Search Sidebar -->
   <div data-search-target="sidebar" 
-       class="fixed inset-y-0 right-0 w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out">
+       class="fixed inset-y-0 right-0 w-80 sm:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out">
     <div class="h-full flex flex-col bg-white shadow-xl">
       <div class="border-b border-gray-200 px-4 py-6 sm:px-6">
         <div class="flex items-center justify-between">
