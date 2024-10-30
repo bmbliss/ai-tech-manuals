@@ -12,6 +12,7 @@ class Section
   validates :position, presence: true
 
   before_validation :set_position, on: :create
+  before_save :generate_embedding, if: :content_changed?
 
   private
 
@@ -31,5 +32,27 @@ class Section
 
   def self.calculate_position(prev_pos, next_pos)
     return (next_pos + prev_pos) / 2.0
+  end
+
+  def generate_embedding
+    return unless content.present?
+    
+    Rails.logger.info "Generating embedding for section #{id}"
+
+    # Strip HTML and decode entities
+    clean_content = ActionView::Base.full_sanitizer.sanitize(content)
+    
+    response = OpenAI::Client.new.embeddings(
+      parameters: {
+        model: "text-embedding-3-small",
+        input: clean_content
+      }
+    )
+
+    if response["data"]
+      self.set(embedding: response["data"][0]["embedding"])
+    end
+  rescue => e
+    Rails.logger.error "Failed to generate embedding: #{e.message}"
   end
 end 
