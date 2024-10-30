@@ -1,0 +1,26 @@
+<%= form_with(model: [manual, section], class: "space-y-6", data: { controller: "tinymce" }) do |f| %>
+  <% if section.errors.any? %>
+    <div class="bg-red-50 p-4 rounded-md">
+      <h2 class="text-red-800 text-sm font-medium"><%= pluralize(section.errors.count, "error") %> prohibited this section from being saved:</h2>
+      <ul class="mt-2 text-red-700 text-sm">
+        <% section.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="space-y-4">
+    <div>
+      <%= f.label :content, class: "block text-sm font-medium text-gray-700" %>
+      <%= f.text_area :content, class: "tinymce" %>
+    </div>
+
+    <%= f.hidden_field :position %>
+
+    <div class="flex justify-end gap-3">
+      <%= link_to 'Cancel', manual_path(manual), class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
+      <%= f.submit class: "px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700" %>
+    </div>
+  </div>
+<% end %> 

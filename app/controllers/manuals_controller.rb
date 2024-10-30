@@ -6,6 +6,7 @@ class ManualsController < ApplicationController
   end
 
   def show
+    @sections = @manual.sections.order(position: :asc)
   end
 
   def new
@@ -45,6 +46,6 @@ class ManualsController < ApplicationController
   end
 
   def manual_params
-    params.require(:manual).permit(:title, :description, :content)
+    params.require(:manual).permit(:title, :description)
   end
 end 

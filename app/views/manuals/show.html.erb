@@ -7,14 +7,36 @@
       <p class="mt-2 text-sm text-gray-500"><%= @manual.description %></p>
     </div>
     <div class="mt-4 flex md:ml-4 md:mt-0">
-      <%= link_to 'Edit', edit_manual_path(@manual), class: "ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700" %>
-      <%= button_to 'Delete', manual_path(@manual), method: :delete, class: "ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700", data: { confirm: 'Are you sure?' } %>
+      <%= link_to 'Add Section', new_manual_section_path(@manual), 
+          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700" %>
+      <%= link_to 'Edit Manual', edit_manual_path(@manual), 
+          class: "ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700" %>
     </div>
   </div>
 
-  <div class="bg-white shadow rounded-lg">
-    <div class="px-4 py-5 sm:p-6 prose max-w-none">
-      <%= sanitize @manual.content %>
+  <% if @sections.any? %>
+    <div class="space-y-6">
+      <% @sections.each do |section| %>
+        <div class="bg-white shadow rounded-lg" id="section_<%= section.id %>">
+          <div class="p-6">
+            <div class="prose max-w-none">
+              <%= sanitize section.content %>
+            </div>
+            <div class="mt-4 flex justify-end space-x-3">
+              <%= link_to 'Edit', edit_manual_section_path(@manual, section), 
+                  class: "text-sm text-blue-600 hover:text-blue-900" %>
+              <%= button_to 'Delete', manual_section_path(@manual, section), 
+                  method: :delete,
+                  class: "text-sm text-red-600 hover:text-red-900",
+                  data: { confirm: 'Are you sure?' } %>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
-  </div>
+  <% else %>
+    <div class="text-center py-12 bg-gray-50 rounded-lg">
+      <p class="text-gray-500">No sections yet. Click 'Add Section' to create one.</p>
+    </div>
+  <% end %>
 </div> 

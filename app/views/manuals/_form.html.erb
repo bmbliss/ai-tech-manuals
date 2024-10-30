@@ -1,4 +1,4 @@
-<%= form_with(model: manual, class: "space-y-6", data: { controller: "tinymce" }) do |f| %>
+<%= form_with(model: manual, class: "space-y-6") do |f| %>
   <% if manual.errors.any? %>
     <div class="bg-red-50 p-4 rounded-md">
       <h2 class="text-red-800 text-sm font-medium"><%= pluralize(manual.errors.count, "error") %> prohibited this manual from being saved:</h2>
@@ -19,11 +19,6 @@
     <div>
       <%= f.label :description, class: "block text-sm font-medium text-gray-700" %>
       <%= f.text_area :description, rows: 3, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
-    </div>
-
-    <div>
-      <%= f.label :content, class: "block text-sm font-medium text-gray-700" %>
-      <%= f.text_area :content, class: "tinymce", data: { tinymce_target: "editor" } %>
     </div>
 
     <div class="flex justify-end gap-3">
