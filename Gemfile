@@ -64,3 +64,5 @@ end
 gem 'mongoid'
 gem 'ruby-openai'
 gem 'tinymce-rails'
+
+gem "mongo"

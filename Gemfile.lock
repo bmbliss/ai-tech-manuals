@@ -272,6 +272,7 @@ DEPENDENCIES
   dotenv-rails
   importmap-rails
   jbuilder
+  mongo
   mongoid
   propshaft
   pry-rails

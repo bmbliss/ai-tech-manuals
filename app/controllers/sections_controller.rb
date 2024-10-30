@@ -68,6 +68,48 @@ class SectionsController < ApplicationController
     end
   end
 
+  def search
+    query = params[:query]
+    return render json: { error: "Query required" }, status: :unprocessable_entity if query.blank?
+
+    # Generate embedding for search query
+    response = OpenAI::Client.new.embeddings(
+      parameters: {
+        model: "text-embedding-3-small",
+        input: query
+      }
+    )
+
+    if response["data"]
+      query_embedding = response["data"][0]["embedding"]
+      
+      # Search using vector similarity
+      results = @manual.sections.collection.aggregate([
+        {
+          '$vectorSearch': {
+            'queryVector': query_embedding,
+            'path': 'embedding',
+            'numCandidates': 100,
+            'limit': 3,
+            'index': 'manauls_sections_vector_index'
+          },
+        },
+        {
+          '$project': {
+            '_id': 1,
+            'manual_id': 1,
+            'content': 1,
+            "score" => { "$meta" => "vectorSearchScore" }
+          }
+        }
+      ]).to_a
+
+      render json: { results: results }
+    else
+      render json: { error: "Failed to generate embedding" }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_manual

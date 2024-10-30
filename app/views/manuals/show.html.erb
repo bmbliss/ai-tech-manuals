@@ -6,6 +6,20 @@
       </h2>
       <p class="mt-2 text-sm text-gray-500"><%= @manual.description %></p>
     </div>
+    
+    <div class="mt-4 md:mt-0 md:ml-4" data-controller="search">
+      <div class="flex gap-2">
+        <div class="relative">
+          <input type="text"
+                 data-search-target="query"
+                 placeholder="Search manual..."
+                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                 data-action="keyup->search#search">
+        </div>
+      </div>
+
+      <%= render 'shared/search_results_modal' %>
+    </div>
   </div>
 
   <% if @sections.any? %>
