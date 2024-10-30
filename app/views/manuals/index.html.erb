@@ -1,0 +1,24 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold">Technical Manuals</h1>
+    <%= link_to 'New Manual', new_manual_path, 
+        class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <% @manuals.each do |manual| %>
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <h3 class="text-lg font-medium"><%= manual.title %></h3>
+          <p class="mt-1 text-sm text-gray-600"><%= manual.description %></p>
+          <div class="mt-4">
+            <%= link_to 'View', manual_path(manual), 
+                class: "text-blue-600 hover:text-blue-900" %>
+            <%= link_to 'Edit', edit_manual_path(manual), 
+                class: "ml-3 text-blue-600 hover:text-blue-900" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div> 
