@@ -4,16 +4,19 @@ development:
     # Defines the default client. (required)
     default:
       # Mongoid can connect to a URI accepted by the driver:
-      # uri: mongodb://user:password@mongodb.domain.com:27017/my_new_rails_app_development
+      # uri: mongodb://user:password@mongodb.domain.com:27017/ai_tech_manuals_development
 
       # Otherwise define the parameters separately.
       # This defines the name of the default database that Mongoid can connect to.
       # (required).
-      database: my_new_rails_app_development
+      # database: ai_tech_manuals_development
       # Provides the hosts the default client can connect to. Must be an array
       # of host:port pairs. (required)
-      hosts:
-        - localhost:27017
+      # hosts:
+      #   - localhost:27017
+
+      uri: mongodb+srv://<%= ENV['MONGODB_USERNAME'] %>:<%= ENV['MONGODB_PASSWORD'] %>@cluster0.wl6rvfq.mongodb.net/ai_manuals?retryWrites=true&authSource=admin&w=majority
+      
       options:
         # Note that all options listed below are Ruby driver client options (the mongo gem).
         # Please refer to the driver documentation of the version of the mongo gem you are using
@@ -290,7 +293,7 @@ development:
 test:
   clients:
     default:
-      database: my_new_rails_app_test
+      database: ai_tech_manuals_test
       hosts:
         - localhost:27017
       options:

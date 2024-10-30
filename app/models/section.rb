@@ -11,6 +11,15 @@ class Section
   validates :content, presence: true
   validates :position, presence: true
 
+  # WARNING INVALID - for refeerence only - Create vector search index
+  # index({ embedding: "vector" }, {
+  #   name: "manual_sections_vector_index",
+  #   vector_search_options: {
+  #     num_dimensions: 1536,  # for text-embedding-3-small
+  #     similarity: "cosine"
+  #   }
+  # })
+
   before_validation :set_position, on: :create
   before_save :generate_embedding, if: :content_changed?
 
@@ -25,9 +34,9 @@ class Section
     next_section = manual.sections.where(:position.gt => position).order(position: :asc).first
 
     self.position = if last_section
-                     last_section.position + 1000
+                     last_section.position + 1
                    else
-                     1000
+                     1
                    end
   end
 

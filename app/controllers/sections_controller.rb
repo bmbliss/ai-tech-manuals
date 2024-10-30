@@ -19,7 +19,7 @@ class SectionsController < ApplicationController
     else
       # Default to appending at the end
       last_section = @manual.sections.order(position: :desc).first
-      @section.position = last_section ? last_section.position + 1000 : 1000
+      @section.position = last_section ? last_section.position + 1 : 1
     end
     
     if @section.save
