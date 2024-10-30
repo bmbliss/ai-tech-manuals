@@ -16,7 +16,8 @@
       <%= f.text_area :content, class: "tinymce" %>
     </div>
 
-    <%= f.hidden_field :position %>
+    <%= hidden_field_tag :prev_position, @prev_position if @prev_position %>
+    <%= hidden_field_tag :next_position, @next_position if @next_position %>
 
     <div class="flex justify-end gap-3">
       <%= link_to 'Cancel', manual_path(manual), class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>

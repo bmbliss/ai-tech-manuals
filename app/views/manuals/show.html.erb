@@ -16,23 +16,40 @@
 
   <% if @sections.any? %>
     <div class="space-y-6">
-      <% @sections.each do |section| %>
-        <div class="bg-white shadow rounded-lg" id="section_<%= section.id %>">
-          <div class="p-6">
-            <div class="prose max-w-none">
-              <%= sanitize section.content %>
-            </div>
-            <div class="mt-4 flex justify-end space-x-3">
-              <%= link_to 'Edit', edit_manual_section_path(@manual, section), 
+      <div class="space-y-2">
+        <% @sections.each_with_index do |section, index| %>
+          <% if index == 0 %>
+            <div class="flex justify-center">
+              <%= link_to 'Insert Section Here', new_manual_section_path(@manual, prev_position: 0, next_position: section.position),
                   class: "text-sm text-blue-600 hover:text-blue-900" %>
-              <%= button_to 'Delete', manual_section_path(@manual, section), 
-                  method: :delete,
-                  class: "text-sm text-red-600 hover:text-red-900",
-                  data: { confirm: 'Are you sure?' } %>
+            </div>
+          <% end %>
+
+          <div class="bg-white shadow rounded-lg" id="section_<%= section.id %>">
+            <div class="p-6">
+              <div class="prose max-w-none">
+                <%= sanitize section.content %>
+              </div>
+              <div class="mt-4 flex justify-end space-x-3">
+                <%= link_to 'Edit', edit_manual_section_path(@manual, section), 
+                    class: "text-sm text-blue-600 hover:text-blue-900" %>
+                <%= button_to 'Delete', manual_section_path(@manual, section), 
+                    method: :delete,
+                    class: "text-sm text-red-600 hover:text-red-900",
+                    data: { turbo_confirm: 'Are you sure?' } %>
+              </div>
             </div>
           </div>
-        </div>
-      <% end %>
+
+          <div class="flex justify-center">
+            <%= link_to 'Insert Section Here', 
+                new_manual_section_path(@manual, 
+                  prev_position: section.position,
+                  next_position: @sections[index + 1]&.position || section.position + 1000),
+                class: "text-sm text-blue-600 hover:text-blue-900" %>
+          </div>
+        <% end %>
+      </div>
     </div>
   <% else %>
     <div class="text-center py-12 bg-gray-50 rounded-lg">
