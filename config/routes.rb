@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   resources :manuals do
-    resources :sections, except: [:index, :show] do
-      post :insert, on: :collection
+    resources :sections do
+      member do
+        post :generate_content
+      end
     end
   end
   root 'manuals#index'

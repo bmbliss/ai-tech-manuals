@@ -16,6 +16,7 @@ class Section
 
   private
 
+  # FIXME
   def set_position
     return if position.present?
 

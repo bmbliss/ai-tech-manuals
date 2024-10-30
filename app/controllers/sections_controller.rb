@@ -1,6 +1,6 @@
 class SectionsController < ApplicationController
   before_action :set_manual
-  before_action :set_section, only: [:edit, :update, :destroy]
+  before_action :set_section, only: [:edit, :update, :destroy, :generate_content]
 
   def new
     @section = @manual.sections.build
@@ -43,6 +43,29 @@ class SectionsController < ApplicationController
   def destroy
     @section.destroy
     redirect_to @manual, notice: 'Section was successfully removed.'
+  end
+
+  def generate_content
+    prompt = params[:prompt].presence || "Write a technical documentation section about"
+
+    response = OpenAI::Client.new.chat(
+      parameters: {
+        model: "gpt-3.5-turbo-0125",
+        messages: [
+          { role: "system", content: "You are a technical writer creating documentation. Output in HTML format." },
+          { role: "user", content: prompt }
+        ],
+        temperature: 0.7
+      }
+    )
+
+    # TODO - might need to do some parsing/sanitizing of the response
+
+    if response["choices"]
+      render json: { content: response["choices"][0]["message"]["content"] }
+    else
+      render json: { error: "Failed to generate content" }, status: :unprocessable_entity
+    end
   end
 
   private
