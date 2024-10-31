@@ -11,6 +11,11 @@ class Section
   validates :content, presence: true
   validates :position, presence: true
 
+  # Indexes
+  index({ manual_id: 1 }) # For belongs_to relationship lookups
+  index({ manual_id: 1, position: 1 }) # For ordered sections within a manual
+  index({ embedding: "2dsphere" }) # For vector similarity search
+
   before_validation :set_position, on: :create
   before_save :generate_embedding, if: :content_changed?
 
