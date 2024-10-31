@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["query", "sidebar", "results", "mainContent", "spinner"]
+  static targets = ["query", "sidebar", "results", "spinner"]
   
   connect() {
     this.timeout = null
@@ -10,7 +10,6 @@ export default class extends Controller {
 
   toggleSidebar() {
     this.sidebarTarget.classList.toggle('translate-x-full')
-    this.mainContentTarget.classList.toggle('mr-96')
     if (!this.sidebarTarget.classList.contains('translate-x-full')) {
       this.queryTarget.focus()
     }
@@ -49,7 +48,6 @@ export default class extends Controller {
 
   showResults(results) {
     this.sidebarTarget.classList.remove('translate-x-full')
-    this.mainContentTarget.classList.add('mr-96')
     
     this.resultsTarget.innerHTML = `
       <div class="mb-6">
@@ -129,7 +127,6 @@ export default class extends Controller {
 
   showNoResults() {
     this.sidebarTarget.classList.remove('translate-x-full')
-    this.mainContentTarget.classList.add('mr-96')
     
     this.resultsTarget.innerHTML = `
       <div class="text-center py-6 text-gray-500">
@@ -165,7 +162,6 @@ export default class extends Controller {
 
   closeSidebar() {
     this.sidebarTarget.classList.add('translate-x-full')
-    this.mainContentTarget.classList.remove('mr-96')
   }
 
   getManualId() {
