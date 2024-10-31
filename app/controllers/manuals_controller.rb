@@ -7,6 +7,14 @@ class ManualsController < ApplicationController
 
   def show
     @sections = @manual.sections.order(position: :asc)
+    @section_headings = @sections.map.with_index(1) do |section, position|
+      heading_text = Nokogiri::HTML(section.content).at('h1, h2, h3, h4, h5, h6')&.text || "Section #{position}"
+      {
+        id: section.id,
+        heading: heading_text,
+        position: position
+      }
+    end
   end
 
   def new

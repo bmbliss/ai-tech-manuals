@@ -274,6 +274,7 @@ DEPENDENCIES
   jbuilder
   mongo
   mongoid
+  nokogiri
   propshaft
   pry-rails
   puma (>= 5.0)

@@ -1,6 +1,26 @@
 <div class="relative" data-controller="search">
-  <!-- Main content -->
-  <div class="max-w-7xl mx-auto p-0 sm:p-6" data-search-target="mainContent">
+  <!-- Left Sidebar -->
+  <div class="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 overflow-y-auto">
+    <div class="px-4 py-6">
+      <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        Table of Contents
+      </h3>
+      <nav class="mt-4 space-y-2">
+        <% @section_headings.each do |section| %>
+          <%= link_to "#section_#{section[:id]}", 
+              class: "block px-2 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md" do %>
+            <div class="flex items-center">
+              <span class="text-xs text-gray-400 w-6"><%= section[:position] %>.</span>
+              <span class="truncate"><%= section[:heading] %></span>
+            </div>
+          <% end %>
+        <% end %>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Main content - adjust margin to account for sidebar -->
+  <div class="ml-64 max-w-7xl mx-auto p-0 sm:p-6" data-search-target="mainContent">
     <div class="md:flex md:items-center md:justify-between mb-8">
       <div class="min-w-0 flex-1">
         <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
