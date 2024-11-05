@@ -1,6 +1,6 @@
 class SectionsController < ApplicationController
   before_action :set_manual
-  before_action :set_section, only: [:edit, :update, :destroy, :generate_content]
+  before_action :set_section, only: [:edit, :update, :destroy]
 
   def new
     @section = @manual.sections.build
@@ -71,40 +71,24 @@ class SectionsController < ApplicationController
   def search
     query = params[:query]
     return render json: { error: "Query required" }, status: :unprocessable_entity if query.blank?
-
-    # Generate embedding for search query
+  
     response = OpenAI::Client.new.embeddings(
       parameters: {
         model: "text-embedding-3-small",
         input: query
       }
     )
-
+  
     if response["data"]
       query_embedding = response["data"][0]["embedding"]
       
-      # Search using vector similarity
-      results = @manual.sections.collection.aggregate([
-        {
-          '$vectorSearch': {
-            'queryVector': query_embedding,
-            'path': 'embedding',
-            'numCandidates': 100,
-            'limit': 3,
-            'index': 'manauls_sections_vector_index'
-          },
-        },
-        {
-          '$project': {
-            '_id': 1,
-            'manual_id': 1,
-            'content': 1,
-            "score" => { "$meta" => "vectorSearchScore" }
-          }
-        }
-      ]).to_a
+      # Much cleaner with neighbor!
+      results = @manual.sections.nearest_neighbors(:embedding, query_embedding, distance: "cosine").limit(3)
 
-      render json: { results: results }
+      # FIXME - hack to exclude the embedding from the results
+      res = results.map { |result| result.attributes.except("embedding") }
+
+      render json: { results: res }
     else
       render json: { error: "Failed to generate embedding" }, status: :unprocessable_entity
     end

@@ -4,9 +4,6 @@ Rails.application.routes.draw do
       collection do
         get :search
         post :summarize
-      end
-      
-      member do
         post :generate_content
       end
     end

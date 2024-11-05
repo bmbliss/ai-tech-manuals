@@ -3,7 +3,6 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["modal", "content", "prompt", "result", "generateButton", "applyButton"]
   static values = {
-    sectionId: String,
     manualId: String
   }
 
@@ -19,7 +18,8 @@ export default class extends Controller {
     this.generateButtonTarget.textContent = "Generating..."
     
     try {
-      const response = await fetch(`/manuals/${this.manualIdValue}/sections/${this.sectionIdValue}/generate_content`, {
+      // If no section id, we're creating a new section
+      const response = await fetch(`/manuals/${this.manualIdValue}/sections/generate_content`, {
         method: 'POST',
         headers: {
           'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
