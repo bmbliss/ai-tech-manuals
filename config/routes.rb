@@ -6,6 +6,7 @@ Rails.application.routes.draw do
         post :summarize
         post :generate_content
         get :find_similar
+        post :suggest_edits
       end
     end
   end

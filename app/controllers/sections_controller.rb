@@ -164,6 +164,47 @@ class SectionsController < ApplicationController
     end
   end
 
+  def suggest_edits
+    content = params[:content]
+    similar_sections = params[:similar_sections]
+
+    prompt = <<~PROMPT
+      I have a technical documentation section and some similar sections from other manuals. 
+      Please analyze the current content and the similar sections, then suggest improvements 
+      to make the language and terminology more consistent with the similar sections while 
+      maintaining the original meaning.
+
+      Current content:
+      #{content}
+
+      Similar sections:
+      #{similar_sections.map { |s| "#{s[:content]} (#{s[:similarity]}% similar)" }.join("\n\n")}
+
+      Please provide an improved version of the current content that:
+      1. Aligns terminology with similar sections
+      2. Maintains the same meaning and structure
+      3. Keeps any unique information from the original
+      4. Uses consistent formatting
+    PROMPT
+
+    response = OpenAI::Client.new.chat(
+      parameters: {
+        model: "gpt-3.5-turbo-0125",
+        messages: [
+          { role: "system", content: "You are a technical documentation expert focused on maintaining consistency across documentation." },
+          { role: "user", content: prompt }
+        ],
+        temperature: 0.7
+      }
+    )
+
+    if response.dig("choices", 0, "message", "content")
+      render json: { suggestion: response["choices"][0]["message"]["content"] }
+    else
+      render json: { error: "Failed to generate suggestion" }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_manual

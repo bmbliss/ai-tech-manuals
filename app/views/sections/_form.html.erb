@@ -1,7 +1,9 @@
 <%= form_with(model: [manual, section], class: "space-y-6", 
     data: { controller: "tinymce ai-assistant similar-sections",
             ai_assistant_section_id_value: section.id.to_s,
-            ai_assistant_manual_id_value: manual.id.to_s }) do |f| %>
+            ai_assistant_manual_id_value: manual.id.to_s,
+            similar_sections_manual_id_value: manual.id.to_s 
+          }) do |f| %>
   
   <% if section.errors.any? %>
     <div class="bg-red-50 p-4 rounded-md">
