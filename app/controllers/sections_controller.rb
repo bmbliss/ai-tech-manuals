@@ -122,6 +122,48 @@ class SectionsController < ApplicationController
     end
   end
 
+  def find_similar
+    section = Section.find(params[:id]) if params[:id].present?
+    query_text = section&.content || params[:content]
+    return render json: { error: "No content provided" }, status: :unprocessable_entity if query_text.blank?
+
+    # Get embedding for the query text
+    response = OpenAI::Client.new.embeddings(
+      parameters: {
+        model: "text-embedding-3-small",
+        input: ActionView::Base.full_sanitizer.sanitize(query_text)
+      }
+    )
+
+    if response["data"]
+      query_embedding = response["data"][0]["embedding"]
+      
+      # Find similar sections across other manuals
+      similar_sections = Section
+        .where.not(manual_id: params[:manual_id])
+        .where.not(embedding: nil)
+        .nearest_neighbors(:embedding, query_embedding, distance: "cosine")
+        .limit(5)
+        .includes(:manual)
+      
+      results = similar_sections.map do |s|
+        {
+          id: s.id,
+          content: s.content,
+          manual: {
+            id: s.manual.id,
+            title: s.manual.title
+          },
+          similarity_score: (1 - s.neighbor_distance/2) * 100
+        }
+      end
+
+      render json: { results: results }
+    else
+      render json: { error: "Failed to generate embedding" }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_manual

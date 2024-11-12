@@ -3,7 +3,8 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["modal", "content", "prompt", "result", "generateButton", "applyButton"]
   static values = {
-    manualId: String
+    manualId: String,
+    sectionId: String
   }
 
   openModal() {
@@ -18,7 +19,6 @@ export default class extends Controller {
     this.generateButtonTarget.textContent = "Generating..."
     
     try {
-      // If no section id, we're creating a new section
       const response = await fetch(`/manuals/${this.manualIdValue}/sections/generate_content`, {
         method: 'POST',
         headers: {
@@ -26,7 +26,10 @@ export default class extends Controller {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({ prompt: this.promptTarget.value })
+        body: JSON.stringify({ 
+          prompt: this.promptTarget.value,
+          section_id: this.sectionIdValue
+        })
       })
 
       const data = await response.json()

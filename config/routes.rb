@@ -5,6 +5,7 @@ Rails.application.routes.draw do
         get :search
         post :summarize
         post :generate_content
+        get :find_similar
       end
     end
   end

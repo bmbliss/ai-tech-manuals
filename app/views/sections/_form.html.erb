@@ -1,5 +1,5 @@
 <%= form_with(model: [manual, section], class: "space-y-6", 
-    data: { controller: "tinymce ai-assistant",
+    data: { controller: "tinymce ai-assistant similar-sections",
             ai_assistant_section_id_value: section.id.to_s,
             ai_assistant_manual_id_value: manual.id.to_s }) do |f| %>
   
@@ -14,31 +14,68 @@
     </div>
   <% end %>
 
-  <div class="space-y-4">
-    <div class="flex justify-between items-center">
-      <%= f.label :content, class: "block text-sm font-medium text-gray-700" %>
-      
-      <button type="button" 
-              data-action="ai-assistant#openModal"
-              class="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-        <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-        AI Assistant
-      </button>
+  <div class="lg:grid lg:grid-cols-3 lg:gap-6">
+
+    <div class="lg:col-span-2">
+      <div class="space-y-4">
+        <div class="flex justify-between items-center">
+          <%= f.label :content, class: "block text-sm font-medium text-gray-700" %>
+          
+          <button type="button" 
+                  data-action="ai-assistant#openModal"
+                  class="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            AI Assistant
+          </button>
+        </div>
+
+        <%= f.text_area :content, class: "tinymce", data: { ai_assistant_target: "content" } %>
+      </div>
+
+      <%= hidden_field_tag :prev_position, @prev_position if @prev_position %>
+      <%= hidden_field_tag :next_position, @next_position if @next_position %>
+
+      <div class="flex justify-end gap-3">
+        <%= link_to 'Cancel', manual_path(manual), class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
+        <%= f.submit class: "px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 hover:cursor-pointer" %>
+      </div>
+
+      <%# AI Assistant Modal %>
+      <%= render 'shared/ai_assistant_modal' %>
     </div>
 
-    <%= f.text_area :content, class: "tinymce", data: { ai_assistant_target: "content" } %>
+    <div class="lg:col-span-1">
+      <div class="sticky top-6 space-y-4">
+        <div class="bg-white shadow sm:rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg font-medium leading-6 text-gray-900">
+              Similar Sections
+            </h3>
+            <div class="mt-2 text-sm text-gray-500">
+              <p>Find similar content across other manuals to ensure consistent terminology.</p>
+            </div>
+            
+            <button type="button"
+                    data-action="similar-sections#findSimilar"
+                    class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M9 9a2 2 0 114 0 2 2 0 01-4 0z" />
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a4 4 0 00-3.446 6.032l-2.261 2.26a1 1 0 101.414 1.415l2.261-2.261A4 4 0 1011 5z" clip-rule="evenodd" />
+              </svg>
+              Find Similar Sections
+            </button>
+            
+            <div data-similar-sections-target="spinner" class="hidden mt-4">
+              <!-- Spinner markup -->
+            </div>
+            <div data-similar-sections-target="results" class="mt-4">
+              <!-- Results will be inserted here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <%= hidden_field_tag :prev_position, @prev_position if @prev_position %>
-  <%= hidden_field_tag :next_position, @next_position if @next_position %>
-
-  <div class="flex justify-end gap-3">
-    <%= link_to 'Cancel', manual_path(manual), class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
-    <%= f.submit class: "px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 hover:cursor-pointer" %>
-  </div>
-
-  <%# AI Assistant Modal %>
-  <%= render 'shared/ai_assistant_modal' %>
 <% end %> 
