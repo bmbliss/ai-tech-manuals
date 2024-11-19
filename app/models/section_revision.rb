@@ -7,22 +7,32 @@ class SectionRevision < ApplicationRecord
   validates :content, presence: true
   validates :change_description, presence: true
   validates :change_type, inclusion: { in: %w[update create delete move] }
+  validates :status, inclusion: { in: %w[pending approved rejected] }
   
   before_create :set_base_version_and_content
+  
+  scope :pending, -> { where(status: 'pending') }
+  scope :approved, -> { where(status: 'approved') }
+  scope :rejected, -> { where(status: 'rejected') }
   
   def has_conflicts?
     return false if change_type == 'create'
     return false if base_version == section.version_number
     
-    if change_type == 'update'
+    case change_type
+    when 'update'
       base_content != section.content
-    elsif change_type == 'move'
+    when 'move'
       base_position != section.position
+    when 'delete'
+      section.version_number != base_version
+    else
+      false
     end
   end
 
   def generate_diff
-    Diffy::Diff.new(base_content, content).to_s(:html)
+    Diffy::Diff.new(base_content || '', content || '').to_s(:html)
   end
   
   private

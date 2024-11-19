@@ -7,7 +7,9 @@
     </div>
   </div>
 
-  <%= form_with(model: [@manual, @section, @revision], class: "space-y-6") do |f| %>
+  <%= form_with(model: [@manual, @section, @revision], 
+                url: manual_section_revisions_path(@manual, @section), 
+                class: "space-y-6") do |f| %>
     <div class="space-y-4">
       <div>
         <%= f.label :change_description, "Description of Changes", 

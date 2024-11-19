@@ -235,6 +235,6 @@ class SectionsController < ApplicationController
   end
 
   def revision_params
-    params.require(:section_revision).permit(:content, :change_description)
+    params.require(:revision).permit(:content, :change_description)
   end
 end 

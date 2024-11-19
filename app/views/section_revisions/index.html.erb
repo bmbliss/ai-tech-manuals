@@ -1,0 +1,69 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="md:flex md:items-center md:justify-between mb-8">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:tracking-tight">
+        Revision History
+      </h2>
+    </div>
+  </div>
+
+  <% if @revisions.any? %>
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+      <ul role="list" class="divide-y divide-gray-200">
+        <% @revisions.each do |revision| %>
+          <li>
+            <div class="px-4 py-4 sm:px-6 hover:bg-gray-50">
+              <%= link_to manual_section_revision_path(@manual, @section, revision), class: "block" do %>
+                <div class="flex items-center justify-between">
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-blue-600 truncate">
+                      <%= revision.change_description %>
+                    </p>
+                    <div class="mt-2 flex">
+                      <div class="flex items-center text-sm text-gray-500">
+                        <span>By <%= revision.created_by.name %></span>
+                        <span class="mx-2">&middot;</span>
+                        <span><%= time_ago_in_words(revision.created_at) %> ago</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                      <%= case revision.status
+                          when 'pending' then 'bg-yellow-100 text-yellow-800'
+                          when 'approved' then 'bg-green-100 text-green-800'
+                          when 'rejected' then 'bg-red-100 text-red-800'
+                          end %>">
+                      <%= revision.status.titleize %>
+                    </span>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% else %>
+    <div class="bg-white shadow sm:rounded-lg">
+      <div class="px-4 py-5 sm:p-6 text-center">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No revisions yet</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          This section hasn't had any changes proposed yet.
+        </p>
+        <div class="mt-6">
+          <%= link_to edit_manual_section_path(@manual, @section), 
+              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            Propose Changes
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div> 
