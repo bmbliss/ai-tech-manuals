@@ -1,6 +1,6 @@
 class SectionsController < ApplicationController
   before_action :set_manual
-  before_action :set_section, only: [:edit, :update, :destroy, :generate_content]
+  before_action :set_section, only: [:edit, :update, :destroy]
 
   def new
     @section = @manual.sections.build
@@ -71,40 +71,24 @@ class SectionsController < ApplicationController
   def search
     query = params[:query]
     return render json: { error: "Query required" }, status: :unprocessable_entity if query.blank?
-
-    # Generate embedding for search query
+  
     response = OpenAI::Client.new.embeddings(
       parameters: {
         model: "text-embedding-3-small",
         input: query
       }
     )
-
+  
     if response["data"]
       query_embedding = response["data"][0]["embedding"]
       
-      # Search using vector similarity
-      results = @manual.sections.collection.aggregate([
-        {
-          '$vectorSearch': {
-            'queryVector': query_embedding,
-            'path': 'embedding',
-            'numCandidates': 100,
-            'limit': 3,
-            'index': 'manauls_sections_vector_index'
-          },
-        },
-        {
-          '$project': {
-            '_id': 1,
-            'manual_id': 1,
-            'content': 1,
-            "score" => { "$meta" => "vectorSearchScore" }
-          }
-        }
-      ]).to_a
+      # Much cleaner with neighbor!
+      results = @manual.sections.nearest_neighbors(:embedding, query_embedding, distance: "cosine").limit(3)
 
-      render json: { results: results }
+      # FIXME - hack to exclude the embedding from the results
+      res = results.map { |result| result.attributes.except("embedding") }
+
+      render json: { results: res }
     else
       render json: { error: "Failed to generate embedding" }, status: :unprocessable_entity
     end
@@ -135,6 +119,89 @@ class SectionsController < ApplicationController
       render json: { summary: response["choices"][0]["message"]["content"] }
     else
       render json: { error: "Failed to generate summary" }, status: :unprocessable_entity
+    end
+  end
+
+  def find_similar
+    section = Section.find(params[:id]) if params[:id].present?
+    query_text = section&.content || params[:content]
+    return render json: { error: "No content provided" }, status: :unprocessable_entity if query_text.blank?
+
+    # Get embedding for the query text
+    response = OpenAI::Client.new.embeddings(
+      parameters: {
+        model: "text-embedding-3-small",
+        input: ActionView::Base.full_sanitizer.sanitize(query_text)
+      }
+    )
+
+    if response["data"]
+      query_embedding = response["data"][0]["embedding"]
+      
+      # Find similar sections across other manuals
+      similar_sections = Section
+        .where.not(manual_id: params[:manual_id])
+        .where.not(embedding: nil)
+        .nearest_neighbors(:embedding, query_embedding, distance: "cosine")
+        .limit(5)
+        .includes(:manual)
+      
+      results = similar_sections.map do |s|
+        {
+          id: s.id,
+          content: s.content,
+          manual: {
+            id: s.manual.id,
+            title: s.manual.title
+          },
+          similarity_score: (1 - s.neighbor_distance/2) * 100
+        }
+      end
+
+      render json: { results: results }
+    else
+      render json: { error: "Failed to generate embedding" }, status: :unprocessable_entity
+    end
+  end
+
+  def suggest_edits
+    content = params[:content]
+    similar_sections = params[:similar_sections]
+
+    prompt = <<~PROMPT
+      I have a technical documentation section and some similar sections from other manuals. 
+      Please analyze the current content and the similar sections, then suggest improvements 
+      to make the language and terminology more consistent with the similar sections while 
+      maintaining the original meaning.
+
+      Current content:
+      #{content}
+
+      Similar sections:
+      #{similar_sections.map { |s| "#{s[:content]} (#{s[:similarity]}% similar)" }.join("\n\n")}
+
+      Please provide an improved version of the current content that:
+      1. Aligns terminology with similar sections
+      2. Maintains the same meaning and structure
+      3. Keeps any unique information from the original
+      4. Uses consistent formatting
+    PROMPT
+
+    response = OpenAI::Client.new.chat(
+      parameters: {
+        model: "gpt-3.5-turbo-0125",
+        messages: [
+          { role: "system", content: "You are a technical documentation expert focused on maintaining consistency across documentation." },
+          { role: "user", content: prompt }
+        ],
+        temperature: 0.7
+      }
+    )
+
+    if response.dig("choices", 0, "message", "content")
+      render json: { suggestion: response["choices"][0]["message"]["content"] }
+    else
+      render json: { error: "Failed to generate suggestion" }, status: :unprocessable_entity
     end
   end
 

@@ -71,19 +71,19 @@ export default class extends Controller {
           tempDiv.innerHTML = result.content
           const textContent = tempDiv.textContent || tempDiv.innerText
           const preview = textContent.substring(0, 200) + '...'
-          const scorePercentage = Math.round(result.score * 100)
+          const scorePercentage = Math.round((1 - result.neighbor_distance/2) * 100)
           
           return `
-            <div class="border-b border-gray-200 pb-4 mb-4 last:border-b-0" data-section-id="section_${result._id}">
+            <div class="border-b border-gray-200 pb-4 mb-4 last:border-b-0" data-section-id="section_${result.id}">
               <div class="flex items-center justify-between mb-2">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  scorePercentage > 70 ? 'bg-green-100 text-green-800' :
-                  scorePercentage > 50 ? 'bg-yellow-100 text-yellow-800' :
+                  scorePercentage > 80 ? 'bg-green-100 text-green-800' :
+                  scorePercentage > 60 ? 'bg-yellow-100 text-yellow-800' :
                   'bg-red-100 text-red-800'
                 }">
                   ${scorePercentage}% match
                 </span>
-                <a href="#section_${result._id}" 
+                <a href="#section_${result.id}" 
                    data-action="search#scrollToSection"
                    class="text-sm text-blue-600 hover:text-blue-900">
                   Jump to section
