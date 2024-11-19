@@ -1,0 +1,8 @@
+<div class="prose">
+  <h1>Welcome to AI Tech Manuals</h1>
+  <% if user_signed_in? %>
+    <p>You are signed in as <%= current_user.email %></p>
+  <% else %>
+    <p>Please sign in or sign up to continue.</p>
+  <% end %>
+</div> 

@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  devise_for :users
+
   resources :manuals do
     resources :sections do
       collection do
@@ -10,5 +12,6 @@ Rails.application.routes.draw do
       end
     end
   end
-  root 'manuals#index'
+
+  root 'home#index'
 end

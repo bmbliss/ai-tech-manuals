@@ -1,6 +1,6 @@
 class SectionsController < ApplicationController
   before_action :set_manual
-  before_action :set_section, only: [:edit, :update, :destroy]
+  before_action :set_section, except: [:new, :create]
 
   def new
     @section = @manual.sections.build
@@ -30,11 +30,26 @@ class SectionsController < ApplicationController
   end
 
   def edit
+    # Instead of editing directly, we'll create a new revision
+    @revision = @section.revisions.build(
+      content: @section.content,
+      base_content: @section.content,
+      base_version: @section.version_number,
+      manual: @manual
+    )
   end
 
   def update
-    if @section.update(section_params)
-      redirect_to @manual, notice: 'Section was successfully updated.'
+    # Create a new revision instead of updating directly
+    @revision = @section.revisions.build(revision_params.merge(
+      change_type: 'update',
+      created_by: current_user,
+      manual: @manual
+    ))
+
+    if @revision.save
+      redirect_to manual_section_revision_path(@manual, @section, @revision), 
+        notice: 'Revision created and pending review.'
     else
       render :edit, status: :unprocessable_entity
     end
@@ -217,5 +232,9 @@ class SectionsController < ApplicationController
 
   def section_params
     params.require(:section).permit(:content)
+  end
+
+  def revision_params
+    params.require(:section_revision).permit(:content, :change_description)
   end
 end 

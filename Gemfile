@@ -66,3 +66,4 @@ end
 gem 'ruby-openai'
 gem 'tinymce-rails'
 gem 'nokogiri'
+gem "devise"
