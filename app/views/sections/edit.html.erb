@@ -10,6 +10,17 @@
   <%= form_with(model: [@manual, @section, @revision], 
                 url: manual_section_revisions_path(@manual, @section), 
                 class: "space-y-6") do |f| %>
+
+    <% if @revision.errors.any? %>
+      <div class="bg-red-50 p-4 rounded-md">
+        <h2 class="text-red-800 text-sm font-medium"><%= pluralize(@revision.errors.count, "error") %> prohibited this reivsion from being saved:</h2>
+        <ul class="mt-2 text-red-700 text-sm">
+          <% @revision.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
     <div class="space-y-4">
       <div>
         <%= f.label :change_description, "Description of Changes", 

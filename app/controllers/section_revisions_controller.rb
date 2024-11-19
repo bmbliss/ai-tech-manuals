@@ -15,7 +15,7 @@ class SectionRevisionsController < ApplicationController
 
   def approve
     if @revision.has_conflicts?
-      redirect_to [@manual, @section, @revision], 
+      redirect_to manual_section_revision_url(@manual, @section, @revision), 
         alert: 'Cannot approve - this revision has conflicts with the current version.'
       return
     end
@@ -38,7 +38,7 @@ class SectionRevisionsController < ApplicationController
 
   def reject
     @revision.update!(status: 'rejected')
-    redirect_to [@manual, @section, @revision], 
+    redirect_to manual_section_revision_url(@manual, @section, @revision), 
       notice: 'Revision rejected.'
   end
 
@@ -49,10 +49,10 @@ class SectionRevisionsController < ApplicationController
     )
 
     if @comment.save
-      redirect_to [@manual, @section, @revision], 
+      redirect_to manual_section_revision_url(@manual, @section, @revision), 
         notice: 'Comment added.'
     else
-      redirect_to [@manual, @section, @revision], 
+      redirect_to manual_section_revision_url(@manual, @section, @revision), 
         alert: 'Failed to add comment.'
     end
   end
@@ -88,6 +88,6 @@ class SectionRevisionsController < ApplicationController
   end
 
   def revision_params
-    params.require(:revision).permit(:content, :change_description)
+    params.require(:section_revision).permit(:content, :change_description)
   end
 end 
