@@ -1,0 +1,30 @@
+<nav class="bg-white shadow z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      <div class="flex">
+        <%= link_to root_path, class: "flex items-center" do %>
+          <span class="text-xl font-bold text-gray-900">AI Tech Manuals</span>
+        <% end %>
+        
+        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+          <%= link_to "Manuals", manuals_path, 
+              class: "inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 border-b-2 #{current_page?(manuals_path) ? 'border-blue-500' : 'border-transparent hover:border-gray-300'}" %>
+        </div>
+      </div>
+
+      <div class="flex items-center">
+        <% if user_signed_in? %>
+          <span class="text-sm text-gray-500 mr-4"><%= current_user.email %></span>
+          <%= button_to "Sign out", destroy_user_session_path, 
+              method: :delete,
+              class: "text-sm font-medium text-gray-500 hover:text-gray-700 bg-white px-3 py-2 rounded-md" %>
+        <% else %>
+          <%= link_to "Sign in", new_user_session_path, 
+              class: "text-sm font-medium text-gray-500 hover:text-gray-700 px-3 py-2" %>
+          <%= link_to "Sign up", new_user_registration_path, 
+              class: "ml-4 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-md" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</nav> 
