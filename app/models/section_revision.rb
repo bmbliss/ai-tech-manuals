@@ -32,17 +32,12 @@ class SectionRevision < ApplicationRecord
   end
 
   def generate_diff
-    # For displaying the raw HTML diff
-    @raw_diff = Diffy::Diff.new(base_content || '', content || '').to_s(:html)
-    
     # For displaying the rendered HTML diff
-    @rendered_diff = Diffy::Diff.new(
+    Diffy::Diff.new(
       ActionController::Base.helpers.sanitize(base_content || ''),
       ActionController::Base.helpers.sanitize(content || ''),
       include_plus_and_minus_in_html: true
     ).to_s(:html_simple)
-    
-    { raw: @raw_diff, rendered: @rendered_diff }
   end
   
   private
