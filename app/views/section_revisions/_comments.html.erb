@@ -1,0 +1,42 @@
+<div class="mt-8">
+  <div class="flex items-center justify-between mb-4">
+    <h4 class="text-lg font-medium text-gray-900">Comments</h4>
+  </div>
+
+  <div class="space-y-4">
+    <% revision.comments.each do |comment| %>
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="flex space-x-3">
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-medium text-gray-900">
+                <%= comment.user.email %>
+              </h3>
+              <p class="text-sm text-gray-500">
+                <%= time_ago_in_words(comment.created_at) %> ago
+              </p>
+            </div>
+            <div class="mt-1 text-sm text-gray-700">
+              <p><%= comment.content %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <%= form_with(url: comment_manual_section_revision_path(@manual, @section, revision), 
+                class: "mt-4") do |f| %>
+      <div>
+        <%= f.text_area :content, 
+            rows: 3,
+            class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+            placeholder: "Add a comment..." %>
+      </div>
+
+      <div class="mt-3 flex items-center justify-end">
+        <%= f.submit "Comment", 
+            class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+      </div>
+    <% end %>
+  </div>
+</div> 

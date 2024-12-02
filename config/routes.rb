@@ -1,6 +1,16 @@
 Rails.application.routes.draw do
+  devise_for :users
+
   resources :manuals do
     resources :sections do
+      resources :revisions, controller: 'section_revisions' do
+        member do
+          post :approve
+          post :reject
+          post :comment
+        end
+      end
+      
       collection do
         get :search
         post :summarize
@@ -10,5 +20,6 @@ Rails.application.routes.draw do
       end
     end
   end
-  root 'manuals#index'
+
+  root 'home#index'
 end

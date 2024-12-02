@@ -17,7 +17,13 @@ bin/dev
 uses openai 
 
 ## TODO
-- [ ] sync changes across manuals (basically on edit or create, pull in the manuals using vector search and give recommendations somehow)
+- [ ] display the diff HTML rather than the raw html tags...
+- [ ] close comments after approval/rejection
+- [ ] add a "revert to revision" button
+- [ ] test that multiple edits can be made out of order and resolved correctly...
+- [ ] fix the table of contents sidebar
+- [ ] import pdf and convert to HTML and sections 
+- [ ] user permissions and roles - needs to be granular in that a user could only read, edit, etc a particular manual
 
 ## Notes
 
